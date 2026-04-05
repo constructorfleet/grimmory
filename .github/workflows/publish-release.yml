@@ -55,6 +55,8 @@ jobs:
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
 
       - name: Authenticate to Docker Hub
+        id: dockerhub_login
+        continue-on-error: true
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -67,6 +69,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - name: Compute image tags
+        run: |
+          {
+            echo "image_tags<<EOF"
+            if [ "${{ steps.dockerhub_login.outcome }}" = "success" ]; then
+              echo "grimmory/grimmory:${{ env.release_tag }}"
+              echo "grimmory/grimmory:latest"
+            else
+              echo "Docker Hub login failed; skipping Docker Hub tags." >&2
+            fi
+            echo "ghcr.io/grimmory-tools/grimmory:${{ env.release_tag }}"
+            echo "ghcr.io/grimmory-tools/grimmory:latest"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
       - name: Build and push Stable image
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
         with:
@@ -74,11 +91,7 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            grimmory/grimmory:${{ env.release_tag }}
-            grimmory/grimmory:latest
-            ghcr.io/grimmory-tools/grimmory:${{ env.release_tag }}
-            ghcr.io/grimmory-tools/grimmory:latest
+          tags: ${{ env.image_tags }}
           build-args: |
             APP_VERSION=${{ env.release_tag }}
             APP_REVISION=${{ env.commit_sha }}

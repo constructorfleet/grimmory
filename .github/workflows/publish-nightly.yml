@@ -70,6 +70,8 @@ jobs:
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
 
       - name: Authenticate to Docker Hub
+        id: dockerhub_login
+        continue-on-error: true
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -82,6 +84,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - name: Compute image tags
+        run: |
+          {
+            echo "image_tags<<EOF"
+            if [ "${{ steps.dockerhub_login.outcome }}" = "success" ]; then
+              echo "grimmory/grimmory:${{ env.nightly_tag }}"
+              echo "grimmory/grimmory:nightly"
+            else
+              echo "Docker Hub login failed; skipping Docker Hub tags." >&2
+            fi
+            echo "ghcr.io/grimmory-tools/grimmory:${{ env.nightly_tag }}"
+            echo "ghcr.io/grimmory-tools/grimmory:nightly"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
         with:
@@ -89,11 +106,7 @@ jobs:
           file: Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            grimmory/grimmory:${{ env.nightly_tag }}
-            grimmory/grimmory:nightly
-            ghcr.io/grimmory-tools/grimmory:${{ env.nightly_tag }}
-            ghcr.io/grimmory-tools/grimmory:nightly
+          tags: ${{ env.image_tags }}
           build-args: |
             APP_VERSION=${{ env.nightly_tag }}
             APP_REVISION=${{ env.commit_sha }}
