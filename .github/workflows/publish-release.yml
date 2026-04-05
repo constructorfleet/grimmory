@@ -72,7 +72,7 @@ jobs:
       - name: Compute cache tags
         id: cache_tag
         run: |
-          echo "cache_image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/grimmory:buildcache >> "$GITHUB_OUTPUT"
+          echo "cache_image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/grimmory:buildcache" >> "$GITHUB_OUTPUT"
 
       - name: Compute image tags
         run: |
