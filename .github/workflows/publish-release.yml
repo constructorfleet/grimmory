@@ -69,6 +69,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - name: Compute cache tags
+        id: cache_tag
+        run: |
+          echo "cache_image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/grimmory:buildcache >> "$GITHUB_OUTPUT"
+
       - name: Compute image tags
         run: |
           {
@@ -97,10 +102,10 @@ jobs:
             APP_REVISION=${{ env.commit_sha }}
           cache-from: |
             type=gha,scope=image-shared
-            type=registry,ref=ghcr.io/grimmory-tools/grimmory:buildcache
+            type=registry,ref=${{steps.cache_tag.outputs.cache_image}}
           cache-to: |
             type=gha,scope=image-shared,mode=max
-            type=registry,ref=ghcr.io/grimmory-tools/grimmory:buildcache,mode=max
+            type=registry,ref=${{steps.cache_tag.outputs.cache_image}},mode=max
 
       - name: Publish Draft GitHub Release
         env:
