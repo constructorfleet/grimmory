@@ -79,8 +79,8 @@ jobs:
             else
               echo "Docker Hub login failed; skipping Docker Hub tags." >&2
             fi
-            echo "ghcr.io/grimmory-tools/grimmory:${{ env.release_tag }}"
-            echo "ghcr.io/grimmory-tools/grimmory:latest"
+            echo "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/grimmory:${{ env.release_tag }}"
+            echo "ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/grimmory:latest"
             echo "EOF"
           } >> "$GITHUB_ENV"
 
