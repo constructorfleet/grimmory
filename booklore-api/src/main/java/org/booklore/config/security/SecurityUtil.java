@@ -130,6 +130,11 @@ public class SecurityUtil {
         return user != null && user.getPermissions().isCanAccessTaskManager();
     }
 
+    public boolean canBulkAutoFetchMetadata() {
+        var user = getCurrentUser();
+        return user != null && user.getPermissions().isCanBulkAutoFetchMetadata();
+    }
+
     public boolean canReadShelf(Long shelfId) {
         var user = getCurrentUser();
         if (user != null) {
