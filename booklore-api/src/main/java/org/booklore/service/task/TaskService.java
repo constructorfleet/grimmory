@@ -262,9 +262,11 @@ public class TaskService {
 
     private String initializeTask(TaskCreateRequest request, BookLoreUser user, TaskType taskType) {
         Task task = taskRegistry.get(taskType);
-        boolean isAdmin = user.getPermissions() != null && user.getPermissions().isAdmin();
-        if (task != null && !isAdmin) {
-            task.validatePermissions(user, request);
+        if (task != null) {
+            boolean isAdmin = user != null && user.getPermissions() != null && user.getPermissions().isAdmin();
+            if (!isAdmin) {
+                task.validatePermissions(user, request);
+            }
         }
 
         if (!taskType.isParallel()) {
