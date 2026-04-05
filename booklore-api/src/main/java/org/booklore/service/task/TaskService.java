@@ -262,7 +262,8 @@ public class TaskService {
 
     private String initializeTask(TaskCreateRequest request, BookLoreUser user, TaskType taskType) {
         Task task = taskRegistry.get(taskType);
-        if (task != null) {
+        boolean isAdmin = user.getPermissions() != null && user.getPermissions().isAdmin();
+        if (task != null && !isAdmin) {
             task.validatePermissions(user, request);
         }
 
