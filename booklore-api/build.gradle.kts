@@ -103,8 +103,10 @@ dependencies {
 
     // --- Database & Migration ---
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.8")
+    implementation("org.postgresql:postgresql:42.7.7")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.flywaydb:flyway-mysql:12.3.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.3.0")
 
     // --- Security & Authentication ---
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")

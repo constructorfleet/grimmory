@@ -1,0 +1,8 @@
+ALTER TABLE app_settings
+    ALTER COLUMN name TYPE VARCHAR(255),
+    ALTER COLUMN name SET NOT NULL,
+    ADD CONSTRAINT uq_app_settings_name UNIQUE (name);
+
+ALTER TABLE app_settings
+    ALTER COLUMN val TYPE TEXT,
+    ALTER COLUMN val DROP NOT NULL;

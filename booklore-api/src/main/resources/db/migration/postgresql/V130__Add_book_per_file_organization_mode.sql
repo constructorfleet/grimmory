@@ -1,0 +1,1 @@
+ALTER TABLE library ALTER COLUMN organization_mode SET DEFAULT 'BOOK_PER_FILE';

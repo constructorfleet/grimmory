@@ -11,9 +11,9 @@ services:
       - "${BACKEND_PORT:-6060}:6060"
       - "127.0.0.1:${REMOTE_DEBUG_PORT:-5005}:5005"
     environment:
-      - DATABASE_URL=jdbc:mariadb://backend_db:3306/grimmory
-      - DATABASE_USERNAME=grimmory
-      - DATABASE_PASSWORD=grimmory
+      - DATABASE_URL=${DATABASE_URL:-jdbc:mariadb://backend_db:3306/grimmory}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:-grimmory}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-grimmory}
       - REMOTE_DEBUG_ENABLED=true
       - ALLOWED_ORIGINS=http://localhost:4200
       - JAVA_TOOL_OPTIONS=-XX:+UseShenandoahGC -XX:ShenandoahGCHeuristics=compact -XX:+UseCompactObjectHeaders -XX:MaxRAMPercentage=60.0 -XX:InitialRAMPercentage=8.0 -XX:+ExitOnOutOfMemoryError -XX:MaxMetaspaceSize=192m -XX:ReservedCodeCacheSize=64m -Xss512k -XX:CICompilerCount=2 -XX:+UnlockExperimentalVMOptions -XX:ShenandoahUncommitDelay=5000 -XX:ShenandoahGuaranteedGCInterval=30000
@@ -21,7 +21,12 @@ services:
     tty: true
     restart: unless-stopped
     depends_on:
-      - backend_db
+      backend_db:
+        condition: service_started
+        required: false
+      backend_db_postgres:
+        condition: service_started
+        required: false
     volumes:
       - './booklore-api:/booklore-api'
       - /booklore-api/build
@@ -66,6 +71,26 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  backend_db_postgres:
+    image: postgres:17-alpine
+    container_name: backend_db_postgres
+    profiles:
+      - postgres
+    volumes:
+      - backend_db_postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=grimmory
+      - POSTGRES_USER=grimmory
+      - POSTGRES_PASSWORD=grimmory
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grimmory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   node_modules:
   backend_db:
+  backend_db_postgres:

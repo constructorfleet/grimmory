@@ -12,6 +12,7 @@ local_container_name := 'grimmory-local'
 local_db_url := 'jdbc:mariadb://localhost:3366/grimmory?createDatabaseIfNotExist=true'
 local_db_user := 'grimmory'
 local_db_password := 'grimmory'
+local_pg_url := 'jdbc:postgresql://localhost:5432/grimmory'
 
 # Show the primary developer and agent command surface, including submodule recipes.
 help:
@@ -49,6 +50,10 @@ dev-up-detached:
 db-up:
     {{ compose_cmd }} up -d {{ db_service }}
 
+# Start only the PostgreSQL development database service from the compose stack.
+db-up-postgres:
+    {{ compose_cmd }} --profile postgres up -d backend_db_postgres
+
 # Stop only the development database service from the compose stack.
 db-down:
     {{ compose_cmd }} stop {{ db_service }}
@@ -71,6 +76,20 @@ image-build platform='linux/amd64' tag=local_image_tag:
 
 # Run the locally built production image against the expected development defaults.
 image-run tag=local_image_tag db_url=local_db_url db_user=local_db_user db_password=local_db_password:
+    docker run --rm -it \
+      --name "{{ local_container_name }}" \
+      --network host \
+      -e "SPRING_DATASOURCE_URL={{ db_url }}" \
+      -e "SPRING_DATASOURCE_USERNAME={{ db_user }}" \
+      -e "SPRING_DATASOURCE_PASSWORD={{ db_password }}" \
+      -v ./shared/data:/app/data \
+      -v ./shared/books:/books \
+      -v ./shared/bookdrop:/bookdrop \
+      -p 6060:6060 \
+      "{{ tag }}"
+
+# Run the locally built production image against a local PostgreSQL instance.
+image-run-postgres tag=local_image_tag db_url=local_pg_url db_user=local_db_user db_password=local_db_password:
     docker run --rm -it \
       --name "{{ local_container_name }}" \
       --network host \
