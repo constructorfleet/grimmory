@@ -653,17 +653,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/service-worker@npm:^21.2.6":
-  version: 21.2.6
-  resolution: "@angular/service-worker@npm:21.2.6"
+"@angular/service-worker@npm:^21.2.17":
+  version: 21.2.17
+  resolution: "@angular/service-worker@npm:21.2.17"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 21.2.6
+    "@angular/core": 21.2.17
     rxjs: ^6.5.3 || ^7.4.0
   bin:
     ngsw-config: ngsw-config.js
-  checksum: 10c0/a8fdf842c5d3e9900f921c8b0e619f60a3712b4f9baa40914879ff01278afb3b19259c0cf076752050c8bc7ea324bcc9707bbe50f9e8c66d14ae9f323f818441
+  checksum: 10c0/4dec267b9c0e0e094bf3bfa545a71bd308c4959242a6b4ea67be79e8a2e7ebf853bd4a62c8451552e981ea6d3ab2d2826af733e00d6d06df5099fccddad9bee1
   languageName: node
   linkType: hard
 
@@ -6048,7 +6048,7 @@ __metadata:
     "@angular/platform-browser": "npm:^21.2.6"
     "@angular/platform-browser-dynamic": "npm:^21.2.6"
     "@angular/router": "npm:^21.2.6"
-    "@angular/service-worker": "npm:^21.2.6"
+    "@angular/service-worker": "npm:^21.2.17"
     "@embedpdf/pdfium": "npm:2.12.1"
     "@embedpdf/snippet": "npm:2.12.1"
     "@eslint/js": "npm:^10.0.1"
